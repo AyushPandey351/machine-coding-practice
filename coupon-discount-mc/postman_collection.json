@@ -1,0 +1,121 @@
+{
+  "info": {
+    "name": "Licious Coupon / Discount API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8082" },
+    { "key": "couponId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Create Coupon (flat, cart-wide)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/coupons",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"NEWUSER100\",\n  \"discountType\": \"FLAT\",\n  \"discountValue\": 100,\n  \"minCartValue\": 300,\n  \"usageLimitPerUser\": 1,\n  \"totalUsageLimit\": 500,\n  \"expiryDate\": \"2026-12-31T00:00:00Z\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Create Coupon (percentage, product-restricted, capped)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/coupons",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"CHICKEN20\",\n  \"discountType\": \"PERCENTAGE\",\n  \"discountValue\": 20,\n  \"minCartValue\": 100,\n  \"maxDiscountAmount\": 100,\n  \"applicableProductIds\": [2],\n  \"usageLimitPerUser\": 2,\n  \"expiryDate\": \"2026-12-31T00:00:00Z\"\n}"
+        }
+      }
+    },
+    {
+      "name": "List Coupons",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/coupons" }
+    },
+    {
+      "name": "Apply Coupon",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/coupons/apply",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": 1,\n  \"couponCode\": \"WELCOME50\",\n  \"items\": [\n    { \"productId\": 1, \"quantity\": 2 },\n    { \"productId\": 2, \"quantity\": 1 }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "Apply Coupon - Usage Limit Exceeded (expect 409 on 2nd call)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/coupons/apply",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": 1,\n  \"couponCode\": \"WELCOME50\",\n  \"items\": [\n    { \"productId\": 1, \"quantity\": 2 }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "Apply Coupon - Below Minimum Cart Value (expect 409)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/coupons/apply",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": 2,\n  \"couponCode\": \"WELCOME50\",\n  \"items\": [\n    { \"productId\": 1, \"quantity\": 1 }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "Apply Coupon - Unknown Code (expect 404)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/coupons/apply",
+        "body": { "mode": "raw", "raw": "{\n  \"userId\": 1,\n  \"couponCode\": \"NOPE\",\n  \"items\": [ { \"productId\": 1, \"quantity\": 1 } ]\n}" }
+      }
+    },
+    {
+      "name": "Create Coupon - Duplicate Code (expect 409)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/coupons",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"WELCOME50\",\n  \"discountType\": \"FLAT\",\n  \"discountValue\": 10,\n  \"minCartValue\": 50,\n  \"usageLimitPerUser\": 1,\n  \"expiryDate\": \"2026-12-31T00:00:00Z\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Create Coupon - Validation Error (expect 400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/coupons",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"\",\n  \"discountType\": \"FLAT\",\n  \"discountValue\": 10,\n  \"minCartValue\": 50,\n  \"usageLimitPerUser\": 1,\n  \"expiryDate\": \"2020-01-01T00:00:00Z\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Remove Coupon (deactivate)",
+      "request": { "method": "DELETE", "url": "{{baseUrl}}/api/coupons/{{couponId}}" }
+    },
+    {
+      "name": "List Products (helper)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/products" }
+    },
+    {
+      "name": "List Users (helper)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/users" }
+    }
+  ]
+}
