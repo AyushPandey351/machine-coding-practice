@@ -1,0 +1,103 @@
+{
+  "info": {
+    "name": "Licious Inventory Management API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "productId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Create Product",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/products",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Fish Curry Cut\",\n  \"category\": \"FISH\",\n  \"unit\": \"KG\",\n  \"pricePerUnit\": 349.00,\n  \"initialQuantity\": 20,\n  \"reorderThreshold\": 5\n}"
+        }
+      }
+    },
+    {
+      "name": "Get All Products",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/products" }
+    },
+    {
+      "name": "Get Product By Id",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/products/{{productId}}" }
+    },
+    {
+      "name": "Get Products By Category",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/products/category/CHICKEN" }
+    },
+    {
+      "name": "Search Products By Name",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/products/search?name=chicken" }
+    },
+    {
+      "name": "Get Low Stock Products",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/products/low-stock" }
+    },
+    {
+      "name": "Update Product",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/products/{{productId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pricePerUnit\": 99.00,\n  \"reorderThreshold\": 15\n}"
+        }
+      }
+    },
+    {
+      "name": "Restock Product",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/products/{{productId}}/restock",
+        "body": { "mode": "raw", "raw": "{\n  \"quantity\": 10\n}" }
+      }
+    },
+    {
+      "name": "Sell Product",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/products/{{productId}}/sell",
+        "body": { "mode": "raw", "raw": "{\n  \"quantity\": 5\n}" }
+      }
+    },
+    {
+      "name": "Sell Product - Insufficient Stock (expect 409)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/products/{{productId}}/sell",
+        "body": { "mode": "raw", "raw": "{\n  \"quantity\": 999999\n}" }
+      }
+    },
+    {
+      "name": "Get Product - Not Found (expect 404)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/products/999999" }
+    },
+    {
+      "name": "Create Product - Validation Error (expect 400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/products",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"\",\n  \"category\": \"FISH\",\n  \"unit\": \"KG\",\n  \"pricePerUnit\": -5,\n  \"initialQuantity\": 20,\n  \"reorderThreshold\": 5\n}"
+        }
+      }
+    },
+    {
+      "name": "Delete Product",
+      "request": { "method": "DELETE", "url": "{{baseUrl}}/api/products/{{productId}}" }
+    }
+  ]
+}

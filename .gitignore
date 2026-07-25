@@ -1,0 +1,25 @@
+# Reference clone with its own git history - not part of this repo
+sample-project/
+
+# Tooling / IDE
+.idea/
+.claude/
+.vscode/
+
+# Gradle build output
+build/
+.gradle/
+out/
+bin/
+!**/src/main/**/build/
+!**/src/main/**/out/
+!**/src/main/**/bin/
+!**/src/test/**/build/
+!**/src/test/**/out/
+!**/src/test/**/bin/
+!gradle/wrapper/gradle-wrapper.jar
+
+HELP.md
+*.iws
+*.iml
+*.ipr
