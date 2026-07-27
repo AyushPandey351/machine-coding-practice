@@ -3,6 +3,7 @@ package com.licious.simpleinventory.controller;
 import com.licious.simpleinventory.dto.InventoryRequest;
 import com.licious.simpleinventory.dto.InventoryResponse;
 import com.licious.simpleinventory.service.InventoryService;
+import jakarta.validation.Valid;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,13 @@ public class InventoryController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<InventoryResponse> add(@RequestBody InventoryRequest request) {
+    public ResponseEntity<InventoryResponse> add(@Valid @RequestBody InventoryRequest request) {
         int updatedQuantity = service.addInventory(request.productId(), request.quantity());
         return ResponseEntity.ok(new InventoryResponse(request.productId(), updatedQuantity, "Inventory added successfully"));
     }
 
     @PostMapping("/deduct")
-    public ResponseEntity<InventoryResponse> deduct(@RequestBody InventoryRequest request) {
+    public ResponseEntity<InventoryResponse> deduct(@Valid @RequestBody InventoryRequest request) {
         int updatedQuantity = service.deductInventory(request.productId(), request.quantity());
         return ResponseEntity.ok(new InventoryResponse(request.productId(), updatedQuantity, "Stock deducted successfully"));
     }

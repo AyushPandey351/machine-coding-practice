@@ -1,6 +1,7 @@
 package com.licious.simpleinventory.service;
 
 import com.licious.simpleinventory.exception.InsufficientStockException;
+import com.licious.simpleinventory.exception.InvalidQuantityException;
 import com.licious.simpleinventory.exception.ProductNotFoundException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -11,7 +12,13 @@ public class InventoryService {
 
     private final ConcurrentHashMap<String, AtomicInteger> inventory = new ConcurrentHashMap<>();
 
+    // @Positive on InventoryRequest already blocks this at the HTTP layer,
+    // but this method is also callable directly (e.g. from tests), so the
+    // check is repeated here as a service-level guarantee.
     public int addInventory(String productId, int quantity) {
+        if (quantity <= 0) {
+            throw new InvalidQuantityException("Quantity must be positive");
+        }
         return inventory.computeIfAbsent(productId, k -> new AtomicInteger(0)).addAndGet(quantity);
     }
 
